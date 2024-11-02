@@ -228,8 +228,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                   child: Text(
                                     displayName[0].toUpperCase(),
                                     style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ListTile(
@@ -248,7 +249,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                   displayName,
                                   style: isSelected
                                       ? const TextStyle(
-                                          fontWeight: FontWeight.bold,
                                           color: Colors.deepPurple)
                                       : null,
                                 ),
@@ -320,6 +320,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   tooltip: 'Fetch Contacts',
                   child: const Icon(Icons.refresh),
                 ),
+
                 /// testing
                 // const SizedBox(height: 10),
                 // FloatingActionButton(
