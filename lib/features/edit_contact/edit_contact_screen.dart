@@ -57,6 +57,7 @@ class _EditContactScreenState extends State<EditContactScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple.withOpacity(.4),
         title: const Text('Edit Contact'),
       ),
       body: Padding(
@@ -65,21 +66,64 @@ class _EditContactScreenState extends State<EditContactScreen> {
           children: [
             TextField(
               controller: _firstNameController,
-              decoration: const InputDecoration(labelText: 'First Name'),
+              decoration: InputDecoration(
+                labelText: 'First Name',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.deepPurple),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
             ),
+            const SizedBox(height: 15),
             TextField(
               controller: _lastNameController,
-              decoration: const InputDecoration(labelText: 'Last Name'),
+              decoration: InputDecoration(
+                labelText: 'Last Name',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.deepPurple),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
             ),
+            const SizedBox(height: 15),
             TextField(
               controller: _phoneController,
-              decoration: const InputDecoration(labelText: 'Phone Number'),
+              decoration: InputDecoration(
+                labelText: 'Phone Number',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.deepPurple),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
               keyboardType: TextInputType.phone,
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _updateContact,
-              child: const Text('Save Changes'),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton(
+                    onPressed: _updateContact,
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'Save Changes',
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

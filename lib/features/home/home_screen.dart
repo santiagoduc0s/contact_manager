@@ -167,6 +167,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple.withOpacity(.4),
+        scrolledUnderElevation: 0.0,
         centerTitle: false,
         title: const Text('Contacts'),
         actions: [
@@ -311,17 +313,24 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               ),
       ),
       floatingActionButton: _permissionGranted && !_isSelecting
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  heroTag: 'fetchContacts',
-                  onPressed: _fetchContacts,
-                  tooltip: 'Fetch Contacts',
-                  child: const Icon(Icons.refresh),
-                ),
+          ? FloatingActionButton(
+            heroTag: 'goToCreateContactPage',
+            onPressed: _navigateToCreateContactPage,
+            tooltip: 'Go to Create Contact Page',
+            child: const Icon(Icons.add),
+          )
+          : null,
+    );
+  }
+}
 
-                /// testing
+/// testing
+                // FloatingActionButton(
+                //   heroTag: 'fetchContacts',
+                //   onPressed: _fetchContacts,
+                //   tooltip: 'Fetch Contacts',
+                //   child: const Icon(Icons.refresh),
+                // ),
                 // const SizedBox(height: 10),
                 // FloatingActionButton(
                 //   heroTag: 'createRandomContact',
@@ -329,16 +338,3 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 //   tooltip: 'Create Random Contact',
                 //   child: const Icon(Icons.person_add),
                 // ),
-                const SizedBox(height: 10),
-                FloatingActionButton(
-                  heroTag: 'goToCreateContactPage',
-                  onPressed: _navigateToCreateContactPage,
-                  tooltip: 'Go to Create Contact Page',
-                  child: const Icon(Icons.add),
-                ),
-              ],
-            )
-          : null,
-    );
-  }
-}
