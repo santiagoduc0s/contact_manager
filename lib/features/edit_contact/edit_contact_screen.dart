@@ -47,9 +47,10 @@ class _EditContactScreenState extends State<EditContactScreen> {
       widget.contact.phones.add(Phone(_phoneController.text));
     }
 
-    await widget.contact.update();
+    await widget.contact.update();    
 
     if (!mounted) return;
+
     Navigator.of(context).pop(widget.contact);
   }
 

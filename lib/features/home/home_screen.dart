@@ -248,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                         child: Icon(Icons.person),
                                       ),
                                 title: Text(
-                                  displayName,
+                                  '${contact.name.first} ${contact.name.last}',
                                   style: isSelected
                                       ? const TextStyle(
                                           color: Colors.deepPurple)
@@ -314,27 +314,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ),
       floatingActionButton: _permissionGranted && !_isSelecting
           ? FloatingActionButton(
-            heroTag: 'goToCreateContactPage',
-            onPressed: _navigateToCreateContactPage,
-            tooltip: 'Go to Create Contact Page',
-            child: const Icon(Icons.add),
-          )
+              heroTag: 'goToCreateContactPage',
+              onPressed: _navigateToCreateContactPage,
+              tooltip: 'Go to Create Contact Page',
+              child: const Icon(Icons.add),
+            )
           : null,
     );
   }
 }
-
-/// testing
-                // FloatingActionButton(
-                //   heroTag: 'fetchContacts',
-                //   onPressed: _fetchContacts,
-                //   tooltip: 'Fetch Contacts',
-                //   child: const Icon(Icons.refresh),
-                // ),
-                // const SizedBox(height: 10),
-                // FloatingActionButton(
-                //   heroTag: 'createRandomContact',
-                //   onPressed: _createRandomContact,
-                //   tooltip: 'Create Random Contact',
-                //   child: const Icon(Icons.person_add),
-                // ),
