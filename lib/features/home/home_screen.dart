@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _confirmDeleteSelectedContacts() async {
-    bool confirmDelete = await showDialog(
+    var confirmDelete = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
