@@ -1,4 +1,4 @@
-package com.example.contacts_manager
+package com.ducos.contactsmanager
 
 import io.flutter.embedding.android.FlutterActivity
 
