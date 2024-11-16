@@ -21,3 +21,9 @@ dart run change_app_package_name:main com.ducos.contactsmanager
 ----
 * In ios go to ```ios/Runner/Info.plist```
 * And update the key ```CFBundleDisplayName```
+
+## Config native splash screen
+
+```
+dart run flutter_native_splash:create --path=flutter_native_splash.yaml
+```
