@@ -1,15 +1,16 @@
-import 'package:contacts_manager/features/home/home_screen.dart';
+import 'package:contacts_manager/features/home/views/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
+
+  await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]).then((_) {
-    runApp(const MyApp());
-  });
+  ]);
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

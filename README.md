@@ -2,6 +2,13 @@
 
 Contact+ it's a simple app to manage you contacts in android and ios.
 
+You can find the apps in the next links:
+* [App Store](https://apps.apple.com/gb/app/contact/id6737725485?platform=iphone)
+* [Play Store](https://play.google.com/store/apps/details?id=com.ducos.contactsmanager&hl=en-US&ah=FRZDVylz3JobD42V2ElXE_-Gte4) (I need 20 testers to uploadto the real Play Store)
+
+
+# Steps to uploads to the App Store and Play Store
+The next steps explain the minimul thing (developing part) to upload an app to the stores
 ## Generate Icon
 
 ```
