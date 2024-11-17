@@ -27,3 +27,15 @@ dart run change_app_package_name:main com.ducos.contactsmanager
 ```
 dart run flutter_native_splash:create --path=flutter_native_splash.yaml
 ```
+
+## Make builds
+
+### iOS
+```
+flutter build ios --release
+```
+
+### Android
+```
+flutter build appbundle
+```
