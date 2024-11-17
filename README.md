@@ -2,13 +2,17 @@
 
 Contact+ it's a simple app to manage you contacts in android and ios.
 
+The idea of this repo is make a guide of how to upload an app to the stores.
+
 You can find the apps in the next links:
 * [App Store](https://apps.apple.com/gb/app/contact/id6737725485?platform=iphone)
-* [Play Store](https://play.google.com/store/apps/details?id=com.ducos.contactsmanager&hl=en-US&ah=FRZDVylz3JobD42V2ElXE_-Gte4) (I need 20 testers to uploadto the real Play Store)
+* [Play Store](https://play.google.com/store/apps/details?id=com.ducos.contactsmanager&hl=en-US&ah=FRZDVylz3JobD42V2ElXE_-Gte4) (I need 20 testers to upload to production)
 
 
 # Steps to uploads to the App Store and Play Store
-The next steps explain the minimul thing (developing part) to upload an app to the stores
+
+The next steps explain the minimal things (developing part) to upload an app to the stores
+
 ## Generate Icon
 
 ```
@@ -21,7 +25,7 @@ dart run flutter_launcher_icons -f flutter_launcher_icons.yaml
 dart run change_app_package_name:main com.ducos.contactsmanager
 ```
 
-## Config display 
+## Config display name
 
 * In android go to ```android/app/src/main/AndroidManifest.xml```
 * And update the field ```android:label="Contact+"```
