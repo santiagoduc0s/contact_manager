@@ -6,7 +6,7 @@ The idea of this repo is make a guide of how to upload an app to the stores.
 
 You can find the apps in the next links:
 * [App Store](https://apps.apple.com/gb/app/contact/id6737725485?platform=iphone)
-* [Play Store](https://play.google.com/store/apps/details?id=com.ducos.contactsmanager&hl=en-US&ah=FRZDVylz3JobD42V2ElXE_-Gte4) (I need 20 testers to upload to production)
+* [Play Store](https://play.google.com/apps/testing/com.ducos.contactsmanager) (I need 20 testers to upload to production)
 
 
 # Steps to uploads to the App Store and Play Store
