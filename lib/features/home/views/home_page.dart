@@ -4,20 +4,8 @@ import 'package:contacts_manager/features/home/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int letter = 0;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   Future<void> confirmDeleteSelectedContacts(BuildContext context) async {
     final selectedContacts = context.read<HomeBloc>().state.selectedContacts;
@@ -53,7 +41,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> navigateToCreateContactPage() async {
+  Future<void> navigateToCreateContactPage(BuildContext context) async {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const CreateContactScreen()),
     );
@@ -85,9 +73,7 @@ class _HomePageState extends State<HomePage> {
       widget = const Center(child: CircularProgressIndicator());
     } else if (contacts.isEmpty) {
       widget = const Center(
-        child: Text(
-          'No contacts found. Tap the button to fetch contacts.',
-        ),
+        child: Text('No contacts found.'),
       );
     } else {
       widget = const Stack(
@@ -126,7 +112,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: AnimatedSwitcher(
-        duration: const Duration(seconds: 1),
+        duration: const Duration(milliseconds: 800),
         transitionBuilder: (Widget child, Animation<double> animation) {
           const begin = Offset(0.0, 1.0);
           const end = Offset.zero;
@@ -145,7 +131,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: permissionGranted && !isSelectingContacts
           ? FloatingActionButton(
               heroTag: 'goToCreateContactPage',
-              onPressed: navigateToCreateContactPage,
+              onPressed: () => navigateToCreateContactPage(context),
               tooltip: 'Go to Create Contact Page',
               child: const Icon(Icons.add),
             )

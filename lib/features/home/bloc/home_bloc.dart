@@ -166,7 +166,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
     if (event.index == state.selectedLetterIndex) return;
 
     HapticFeedback.selectionClick();
-    
+
     emit(state.copyWith(selectedLetterIndex: event.index));
 
     final letter = state.initialLetters[event.index];
@@ -175,9 +175,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
 
     if (context == null) return;
 
-    Scrollable.ensureVisible(
-      context,
-      alignment: 0,
-    );
+    Scrollable.ensureVisible(context, alignment: 0);
   }
 }
