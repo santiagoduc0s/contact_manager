@@ -58,7 +58,7 @@ class _EditContactScreenState extends State<EditContactScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple.withOpacity(.4),
+        backgroundColor: Colors.deepPurple.shade200,
         title: const Text('Edit Contact'),
       ),
       body: Padding(

@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple.withOpacity(.4),
+        backgroundColor: Colors.deepPurple.shade200,
         scrolledUnderElevation: 0.0,
         centerTitle: false,
         title: const Text('Contacts'),

@@ -37,7 +37,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple.withOpacity(.4),
+         backgroundColor: Colors.deepPurple.shade200,
         title: const Text('Create Contact'),
       ),
       body: Padding(
