@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<HomeBloc>(
-          create: (context) => HomeBloc()..add(const InitHome()),
+          create: (context) => HomeBloc()..add(const HomeInit()),
         ),
       ],
       child: const HomePage(),

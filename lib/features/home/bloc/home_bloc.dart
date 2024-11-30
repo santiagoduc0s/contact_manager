@@ -2,34 +2,42 @@ import 'package:contacts_manager/features/home/bloc/home_event.dart';
 import 'package:contacts_manager/features/home/bloc/home_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
-  HomeBloc() : super(const HomeState.initial()) {
-    on<InitHome>(_onInitHome);
+  HomeBloc({
+    ScrollController? scrollController,
+  })  : scrollController = scrollController ?? ScrollController(),
+        super(const HomeState.initial()) {
+    on<HomeInit>(_onInitHome);
     on<FetchContacts>(_onFetchContacts);
     on<ToggleIsSelectingContacts>(_onToggleIsSelectingContacts);
     on<SelectContact>(_onSelectContact);
     on<DeleteSelectedContacts>(_onDeleteSelectedContacts);
+    on<ChangeSelectedLetterIndex>(_onChangeSelectedLetterIndex);
 
     WidgetsBinding.instance.addObserver(this);
   }
 
+  final ScrollController scrollController;
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      add(const InitHome());
+      add(const HomeInit());
     }
   }
 
   @override
   Future<void> close() {
+    scrollController.dispose();
     WidgetsBinding.instance.removeObserver(this);
     return super.close();
   }
 
-  void _onInitHome(InitHome event, Emitter<HomeState> emit) async {
+  void _onInitHome(HomeInit event, Emitter<HomeState> emit) async {
     bool granted = await FlutterContacts.requestPermission();
     emit(state.copyWith(permissionGranted: granted));
 
@@ -72,7 +80,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
         return nameA.compareTo(nameB);
       });
 
-      emit(state.copyWith(contacts: contacts));
+      final firstLetters = <String>{};
+
+      for (Contact contact in contacts) {
+        firstLetters.add(contact.displayName[0].toUpperCase());
+      }
+
+      final keyValues = <String, GlobalKey>{};
+
+      for (String letter in firstLetters) {
+        keyValues[letter] = GlobalKey();
+      }
+
+      emit(state.copyWith(
+        contacts: contacts,
+        initialLetters: firstLetters.toList(),
+        keys: keyValues,
+      ));
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());
@@ -133,5 +157,27 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
       selectedContacts: {},
       isSelectingContacts: false,
     ));
+  }
+
+  void _onChangeSelectedLetterIndex(
+    ChangeSelectedLetterIndex event,
+    Emitter<HomeState> emit,
+  ) {
+    if (event.index == state.selectedLetterIndex) return;
+
+    HapticFeedback.selectionClick();
+    
+    emit(state.copyWith(selectedLetterIndex: event.index));
+
+    final letter = state.initialLetters[event.index];
+
+    final context = state.keys[letter]?.currentContext;
+
+    if (context == null) return;
+
+    Scrollable.ensureVisible(
+      context,
+      alignment: 0,
+    );
   }
 }

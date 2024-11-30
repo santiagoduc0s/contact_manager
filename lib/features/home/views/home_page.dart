@@ -1,9 +1,7 @@
 import 'package:contacts_manager/features/create_contact/create_contact_screen.dart';
-import 'package:contacts_manager/features/edit_contact/edit_contact_screen.dart';
 import 'package:contacts_manager/features/home/bloc/bloc.dart';
+import 'package:contacts_manager/features/home/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget {
@@ -79,6 +77,30 @@ class _HomePageState extends State<HomePage> {
     final isSelectingContacts =
         context.select((HomeBloc bloc) => bloc.state.isSelectingContacts);
 
+    Widget widget;
+
+    if (!permissionGranted && !isFetchingContacts) {
+      widget = const RequestContactPermission();
+    } else if (isFetchingContacts) {
+      widget = const Center(child: CircularProgressIndicator());
+    } else if (contacts.isEmpty) {
+      widget = const Center(
+        child: Text(
+          'No contacts found. Tap the button to fetch contacts.',
+        ),
+      );
+    } else {
+      widget = const Stack(
+        children: [
+          ContactList(),
+          Align(
+            alignment: Alignment.centerRight,
+            child: SliderAlphabet(),
+          ),
+        ],
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple.shade200,
@@ -103,149 +125,23 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: permissionGranted
-          ? isFetchingContacts
-              ? const Center(child: CircularProgressIndicator())
-              : contacts.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'No contacts found. Tap the button to fetch contacts.',
-                      ),
-                    )
-                  : Stack(
-                      children: [
-                        ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: contacts.length,
-                          itemBuilder: (context, index) {
-                            Contact contact = contacts[index];
-                            bool isSelected =
-                                selectedContacts.contains(contact);
+      body: AnimatedSwitcher(
+        duration: const Duration(seconds: 1),
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          const begin = Offset(0.0, 1.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
 
-                            String displayName = contact.displayName.isNotEmpty
-                                ? contact.displayName
-                                : 'Unnamed Contact';
+          var tween = Tween(begin: begin, end: end).chain(
+            CurveTween(curve: curve),
+          );
 
-                            bool showDivider = index == 0 ||
-                                displayName.trim()[0].toUpperCase() !=
-                                    (contacts[index - 1].displayName.isNotEmpty
-                                        ? contacts[index - 1]
-                                            .displayName
-                                            .trim()[0]
-                                            .toUpperCase()
-                                        : 'U');
+          var offsetAnimation = animation.drive(tween);
 
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (showDivider)
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0, vertical: 4.0),
-                                    child: Text(
-                                      displayName[0].toUpperCase(),
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ListTile(
-                                  tileColor: isSelected
-                                      ? Colors.deepPurple.withOpacity(0.2)
-                                      : null,
-                                  leading: contact.photo != null
-                                      ? CircleAvatar(
-                                          backgroundImage:
-                                              MemoryImage(contact.photo!),
-                                        )
-                                      : const CircleAvatar(
-                                          child: Icon(Icons.person),
-                                        ),
-                                  title: Text(
-                                    '${contact.name.first} ${contact.name.last}',
-                                    style: isSelected
-                                        ? const TextStyle(
-                                            color: Colors.deepPurple)
-                                        : null,
-                                  ),
-                                  subtitle: Text(
-                                    contact.phones.isNotEmpty
-                                        ? contact.phones.first.number
-                                        : 'No phone number',
-                                    style: isSelected
-                                        ? const TextStyle(
-                                            color: Colors.deepPurple)
-                                        : null,
-                                  ),
-                                  onTap: isSelectingContacts
-                                      ? () {
-                                          context
-                                              .read<HomeBloc>()
-                                              .add(SelectContact(contact));
-                                        }
-                                      : () async {
-                                          final editedContact =
-                                              await Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  EditContactScreen(
-                                                      contact: contact),
-                                            ),
-                                          );
-
-                                          if (editedContact != null &&
-                                              editedContact is Contact) {
-                                            setState(() {
-                                              contacts[index] = editedContact;
-                                            });
-                                          }
-                                        },
-                                )
-                              ],
-                            );
-                          },
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: SizedBox(
-                            height: 500,
-                            width: 70,
-                            child: RotatedBox(
-                              quarterTurns: 1,
-                              child: SliderTheme(
-                                data: SliderThemeData(
-                                  trackShape: RotatedLetterSliderTrackShape(),
-                                ),
-                                child: Slider(
-                                  min: 0,
-                                  max: 25,
-                                  value: letter.toDouble(),
-                                  label: String.fromCharCode(65 + letter),
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      letter = newValue.toInt();
-                                    });
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (!permissionGranted)
-                  ElevatedButton(
-                    onPressed: () {
-                      openAppSettings();
-                    },
-                    child: const Text('Request Permission'),
-                  ),
-              ],
-            ),
+          return SlideTransition(position: offsetAnimation, child: child);
+        },
+        child: widget,
+      ),
       floatingActionButton: permissionGranted && !isSelectingContacts
           ? FloatingActionButton(
               heroTag: 'goToCreateContactPage',
@@ -255,87 +151,5 @@ class _HomePageState extends State<HomePage> {
             )
           : null,
     );
-  }
-}
-
-class RotatedLetterSliderTrackShape extends SliderTrackShape {
-  @override
-  Rect getPreferredRect({
-    required RenderBox parentBox,
-    Offset offset = Offset.zero,
-    required SliderThemeData sliderTheme,
-    bool isEnabled = false,
-    bool isDiscrete = false,
-  }) {
-    final double trackHeight = sliderTheme.trackHeight ?? 40.0;
-    final double trackLeft = offset.dx;
-    final double trackTop =
-        offset.dy + (parentBox.size.height - trackHeight) / 2;
-    final double trackWidth = parentBox.size.width;
-    return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
-  }
-
-  @override
-  void paint(
-    PaintingContext context,
-    Offset offset, {
-    required RenderBox parentBox,
-    required SliderThemeData sliderTheme,
-    required Animation<double> enableAnimation,
-    required Offset thumbCenter,
-    Offset? secondaryOffset,
-    bool isEnabled = false,
-    bool isDiscrete = false,
-    required TextDirection textDirection,
-  }) {
-    if (sliderTheme.trackHeight == null ||
-        sliderTheme.activeTrackColor == null ||
-        sliderTheme.inactiveTrackColor == null) {
-      return;
-    }
-
-    final Rect trackRect = getPreferredRect(
-      parentBox: parentBox,
-      offset: offset,
-      sliderTheme: sliderTheme,
-    );
-
-    final List<String> alphabet = List.generate(
-      26,
-      (index) => String.fromCharCode(65 + index),
-    ); // A-Z
-
-    final double letterSpacing = trackRect.width / (alphabet.length - 1);
-
-    final TextPainter textPainter = TextPainter(
-      textAlign: TextAlign.center,
-      textDirection: TextDirection.ltr,
-    );
-
-    for (int i = 0; i < alphabet.length; i++) {
-      final String letter = alphabet[i];
-      final double letterX = trackRect.left + (i * letterSpacing);
-      final double letterY = trackRect.top + trackRect.height / 2;
-
-      textPainter.text = TextSpan(
-        text: letter,
-        style: TextStyle(
-          color: sliderTheme.activeTrackColor,
-          fontSize: 14.0,
-        ),
-      );
-
-      textPainter.layout();
-
-      // Rotate canvas to draw vertical letters
-      context.canvas.save();
-      context.canvas.translate(letterX, letterY); // Move to letter position
-      context.canvas.rotate(-90 * 3.14159 / 180); // Rotate by -90 degrees
-      textPainter.paint(
-        context.canvas,
-        Offset(-textPainter.width / 2, -textPainter.height / 2),
-      );
-      context.canvas.restore(); // Restore canvas state
-    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:flutter/material.dart';
 
 class HomeState extends Equatable {
   const HomeState({
@@ -9,6 +10,8 @@ class HomeState extends Equatable {
     required this.permissionGranted,
     required this.selectedContacts,
     required this.isSelectingContacts,
+    required this.selectedLetterIndex,
+    required this.keys,
   });
 
   const HomeState.initial({
@@ -18,6 +21,8 @@ class HomeState extends Equatable {
     this.permissionGranted = false,
     this.selectedContacts = const {},
     this.isSelectingContacts = false,
+    this.selectedLetterIndex = 0,
+    this.keys = const {},
   });
 
   final List<String> initialLetters;
@@ -26,6 +31,8 @@ class HomeState extends Equatable {
   final bool permissionGranted;
   final Set<Contact> selectedContacts;
   final bool isSelectingContacts;
+  final int selectedLetterIndex;
+  final Map<String, GlobalKey> keys;
 
   HomeState copyWith({
     List<String>? initialLetters,
@@ -34,6 +41,8 @@ class HomeState extends Equatable {
     bool? permissionGranted,
     Set<Contact>? selectedContacts,
     bool? isSelectingContacts,
+    int? selectedLetterIndex,
+    Map<String, GlobalKey>? keys,
   }) {
     return HomeState(
       initialLetters: initialLetters ?? this.initialLetters,
@@ -42,6 +51,8 @@ class HomeState extends Equatable {
       permissionGranted: permissionGranted ?? this.permissionGranted,
       selectedContacts: selectedContacts ?? this.selectedContacts,
       isSelectingContacts: isSelectingContacts ?? this.isSelectingContacts,
+      selectedLetterIndex: selectedLetterIndex ?? this.selectedLetterIndex,
+      keys: keys ?? this.keys,
     );
   }
 
@@ -53,5 +64,7 @@ class HomeState extends Equatable {
         permissionGranted,
         selectedContacts,
         isSelectingContacts,
+        selectedLetterIndex,
+        keys,
       ];
 }

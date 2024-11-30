@@ -6,8 +6,8 @@ sealed class HomeEvent {
   const HomeEvent();
 }
 
-class InitHome extends HomeEvent {
-  const InitHome();
+class HomeInit extends HomeEvent {
+  const HomeInit();
 }
 
 class FetchContacts extends HomeEvent {
@@ -26,4 +26,10 @@ class SelectContact extends HomeEvent {
 
 class DeleteSelectedContacts extends HomeEvent {
   const DeleteSelectedContacts();
+}
+
+class ChangeSelectedLetterIndex extends HomeEvent {
+  const ChangeSelectedLetterIndex(this.index);
+
+  final int index;
 }
