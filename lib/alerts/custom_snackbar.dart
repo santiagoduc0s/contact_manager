@@ -1,4 +1,4 @@
-import 'package:contacts_manager/alerts/alerts.dart';
+import 'package:contacts_manager/config/app_keys.dart';
 import 'package:contacts_manager/ui/ui.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +11,24 @@ enum CustomSnackbarStatus {
 
 class CustomSnackbar {
   static bool isSnackbarActive = false;
+
+  static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBar(
+    SnackBar snackBar,
+  ) {
+    hideSnackBar();
+
+    final currentState = AppKeys.scaffoldMessengerKey.currentState;
+
+    return currentState!.showSnackBar(snackBar);
+  }
+
+  static void hideSnackBar() {
+    final currentState = AppKeys.scaffoldMessengerKey.currentState;
+
+    if (currentState == null) return;
+
+    currentState.hideCurrentSnackBar();
+  }
 
   static void success({
     required String text,
@@ -176,7 +194,7 @@ class CustomSnackbar {
       backgroundColor = UIColors.info;
     }
 
-    SnackbarActions.showSnackBar(
+    showSnackBar(
       SnackBar(
         backgroundColor: UIColors.transparent,
         elevation: UISpacing.zero,
@@ -231,7 +249,7 @@ class CustomSnackbar {
                           width: UISpacing.space5x,
                           height: UISpacing.space5x,
                           child: IconButton(
-                            onPressed: SnackbarActions.hideSnackBar,
+                            onPressed: hideSnackBar,
                             padding: EdgeInsets.zero,
                             constraints: BoxConstraints(),
                             icon: Icon(
