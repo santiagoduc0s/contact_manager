@@ -18,6 +18,7 @@ dependencies:
   go_router: ^14.6.1
   flutter_svg: ^2.0.16
   google_fonts: ^6.2.1
+  reactive_forms: ^17.0.1
 
 dev_dependencies:
   flutter_native_splash: ^2.4.2
