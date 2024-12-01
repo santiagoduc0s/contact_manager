@@ -9,6 +9,7 @@ class AppRouter {
     routes: [
       HomeScreen.route(),
       CreateContactScreen.route(),
+      EditContactScreen.route(),
     ],
   );
 }

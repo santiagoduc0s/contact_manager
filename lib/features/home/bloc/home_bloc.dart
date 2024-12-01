@@ -20,7 +20,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
     on<SelectContact>(_onSelectContact);
     on<DeleteSelectedContacts>(_onDeleteSelectedContacts);
     on<ChangeSelectedLetterIndex>(_onChangeSelectedLetterIndex);
-    on<AddContact>(_onAddContact);
+    on<AddContactHome>(_onAddContact);
+    on<UpdateContactHome>(_onUpdateContact);
 
     WidgetsBinding.instance.addObserver(this);
   }
@@ -28,6 +29,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
   final ScrollController scrollController;
 
   late final StreamSubscription<Object> contactCreateSubscription;
+  late final StreamSubscription<Object> contactUpdateSubscription;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -42,6 +44,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
 
     contactCreateSubscription.cancel();
+    contactUpdateSubscription.cancel();
 
     return super.close();
   }
@@ -60,7 +63,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
         ContactCrud.instance.createController.stream.listen((contact) {
       if (contact is! Contact) return;
 
-      add(AddContact(contact));
+      add(AddContactHome(contact));
+    });
+
+    contactUpdateSubscription =
+        ContactCrud.instance.updateController.stream.listen((contact) {
+      if (contact is! Contact) return;
+
+      add(UpdateContactHome(contact));
     });
   }
 
@@ -200,7 +210,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
     Scrollable.ensureVisible(context, alignment: 0);
   }
 
-  void _onAddContact(AddContact event, Emitter<HomeState> emit) {
+  void _onAddContact(AddContactHome event, Emitter<HomeState> emit) {
     if (event.contact.displayName.isEmpty) {
       event.contact
         ..displayName = 'Unnamed Contact'
@@ -215,6 +225,46 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
         final nameB = b.displayName.toLowerCase();
         return nameA.compareTo(nameB);
       });
+
+    final firstLetters = <String>{};
+
+    for (Contact contact in newContacts) {
+      final firstChar = contact.displayName[0].toUpperCase();
+
+      if (RegExp(r'[A-Za-z]').hasMatch(firstChar)) {
+        firstLetters.add(firstChar);
+      }
+    }
+
+    final keyValues = <String, GlobalKey>{};
+
+    for (String letter in firstLetters) {
+      keyValues[letter] = GlobalKey();
+    }
+
+    emit(state.copyWith(
+      contacts: newContacts,
+      initialLetters: firstLetters.toList(),
+      keys: keyValues,
+    ));
+  }
+
+  void _onUpdateContact(UpdateContactHome event, Emitter<HomeState> emit) {
+    if (event.contact.displayName.isEmpty) {
+      event.contact
+        ..displayName = 'Unnamed Contact'
+        ..name = Name(
+          first: 'Unnamed',
+          last: 'Contact',
+        );
+    }
+
+    final newContacts = state.contacts.map((contact) {
+      if (contact.id == event.contact.id) {
+        return event.contact;
+      }
+      return contact;
+    }).toList();
 
     final firstLetters = <String>{};
 

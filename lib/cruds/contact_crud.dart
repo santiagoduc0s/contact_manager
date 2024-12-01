@@ -13,7 +13,6 @@ class ContactCrud extends CRUD {
     required String lastName,
     required String phoneNumber,
   }) async {
-
     var newContact = Contact()
       ..name.first = firstName
       ..name.last = lastName
@@ -24,5 +23,24 @@ class ContactCrud extends CRUD {
     createController.add(newContact);
 
     return newContact;
+  }
+
+  Future<Contact> update({
+    required String id,
+    required String firstName,
+    required String lastName,
+    required String phoneNumber,
+  }) async {
+    final contact = (await FlutterContacts.getContact(id))!;
+
+    contact.name.first = firstName;
+    contact.name.last = lastName;
+    contact.phones = [Phone(phoneNumber)];
+
+    await contact.update();
+
+    updateController.add(contact);
+
+    return contact;
   }
 }

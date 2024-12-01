@@ -1,7 +1,9 @@
+import 'package:contacts_manager/features/edit_contact/views/edit_contact_screen.dart';
 import 'package:contacts_manager/features/home/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ContactItem extends StatelessWidget {
   const ContactItem({
@@ -59,25 +61,8 @@ class ContactItem extends StatelessWidget {
                 isSelected ? const TextStyle(color: Colors.deepPurple) : null,
           ),
           onTap: isSelectingContacts
-              ? () {
-                  context.read<HomeBloc>().add(SelectContact(contact));
-                }
-              : () async {
-                  // final editedContact =
-                  //     await Navigator.of(context).push(
-                  //   MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         EditContactScreen(contact: contact),
-                  //   ),
-                  // );
-
-                  // if (editedContact != null &&
-                  //     editedContact is Contact) {
-                  //   setState(() {
-                  //     contacts[index] = editedContact;
-                  //   });
-                  // }
-                },
+              ? () => context.read<HomeBloc>().add(SelectContact(contact))
+              : () => context.pushNamed(EditContactScreen.path, extra: contact),
         ),
       ],
     );

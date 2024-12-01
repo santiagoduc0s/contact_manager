@@ -1,16 +1,19 @@
+import 'package:contacts_manager/alerts/alerts.dart';
+import 'package:contacts_manager/cruds/cruds.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:go_router/go_router.dart';
 
-class EditContactScreen extends StatefulWidget {
+class EditContactPage extends StatefulWidget {
   final Contact contact;
 
-  const EditContactScreen({super.key, required this.contact});
+  const EditContactPage({super.key, required this.contact});
 
   @override
-  State<EditContactScreen> createState() => _EditContactScreenState();
+  State<EditContactPage> createState() => _EditContactPageState();
 }
 
-class _EditContactScreenState extends State<EditContactScreen> {
+class _EditContactPageState extends State<EditContactPage> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _phoneController;
@@ -37,21 +40,24 @@ class _EditContactScreenState extends State<EditContactScreen> {
     super.dispose();
   }
 
-  Future<void> _updateContact() async {
-    widget.contact.name.first = _firstNameController.text;
-    widget.contact.name.last = _lastNameController.text;
+  Future<void> _updateContact(BuildContext context) async {
+    try {
+      final contact = await ContactCrud.instance.update(
+        id: widget.contact.id,
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        phoneNumber: _phoneController.text,
+      );
 
-    if (widget.contact.phones.isNotEmpty) {
-      widget.contact.phones.first.number = _phoneController.text;
-    } else {
-      widget.contact.phones.add(Phone(_phoneController.text));
+      CustomSnackbar.success(text: '${contact.name.first} was updated');
+
+      if (!context.mounted) return;
+
+      context.pop();
+    } catch (e) {
+      CustomSnackbar.error(text: 'Something happened');
+      return;
     }
-
-    await widget.contact.update();
-
-    if (!mounted) return;
-
-    Navigator.of(context).pop(widget.contact);
   }
 
   @override
@@ -112,7 +118,7 @@ class _EditContactScreenState extends State<EditContactScreen> {
               children: [
                 Expanded(
                   child: FilledButton(
-                    onPressed: _updateContact,
+                    onPressed: () => _updateContact(context),
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5.0),

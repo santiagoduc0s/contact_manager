@@ -38,8 +38,14 @@ class ChangeSelectedLetterIndex extends HomeEvent {
   final int index;
 }
 
-class AddContact extends HomeEvent {
-  const AddContact(this.contact);
+class AddContactHome extends HomeEvent {
+  const AddContactHome(this.contact);
+
+  final Contact contact;
+}
+
+class UpdateContactHome extends HomeEvent {
+  const UpdateContactHome(this.contact);
 
   final Contact contact;
 }
