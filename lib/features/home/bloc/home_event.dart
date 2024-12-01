@@ -10,6 +10,10 @@ class HomeInit extends HomeEvent {
   const HomeInit();
 }
 
+class HomeListen extends HomeEvent {
+  const HomeListen();
+}
+
 class FetchContacts extends HomeEvent {
   const FetchContacts();
 }
@@ -32,4 +36,10 @@ class ChangeSelectedLetterIndex extends HomeEvent {
   const ChangeSelectedLetterIndex(this.index);
 
   final int index;
+}
+
+class AddContact extends HomeEvent {
+  const AddContact(this.contact);
+
+  final Contact contact;
 }

@@ -1,5 +1,5 @@
 import 'package:contacts_manager/config/config.dart';
-import 'package:contacts_manager/features/home/home.dart';
+import 'package:contacts_manager/features/features.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -8,6 +8,7 @@ class AppRouter {
     initialLocation: HomeScreen.path,
     routes: [
       HomeScreen.route(),
+      CreateContactScreen.route(),
     ],
   );
 }

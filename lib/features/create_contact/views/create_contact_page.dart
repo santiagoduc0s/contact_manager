@@ -1,28 +1,37 @@
+import 'package:contacts_manager/alerts/alerts.dart';
+import 'package:contacts_manager/cruds/cruds.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:go_router/go_router.dart';
 
-class CreateContactScreen extends StatefulWidget {
-  const CreateContactScreen({super.key});
+class CreateContactPage extends StatefulWidget {
+  const CreateContactPage({super.key});
 
   @override
-  State<CreateContactScreen> createState() => _CreateContactScreenState();
+  State<CreateContactPage> createState() => _CreateContactPageState();
 }
 
-class _CreateContactScreenState extends State<CreateContactScreen> {
+class _CreateContactPageState extends State<CreateContactPage> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
-  Future<void> _saveContact() async {
-    final newContact = Contact()
-      ..name.first = _firstNameController.text
-      ..name.last = _lastNameController.text
-      ..phones = [Phone(_phoneController.text)];
+  Future<void> _saveContact(BuildContext context) async {
+    try {
+      final contact = await ContactCrud.instance.create(
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        phoneNumber: _phoneController.text,
+      );
 
-    await newContact.insert();
+      CustomSnackbar.success(text: '${contact.name.first} was created');
 
-    if (!mounted) return;
-    Navigator.of(context).pop(true);
+      if (!context.mounted) return;
+
+      context.pop();
+    } catch (e) {
+      CustomSnackbar.error(text: 'Something happened');
+      return;
+    }
   }
 
   @override
@@ -37,7 +46,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         backgroundColor: Colors.deepPurple.shade200,
+        backgroundColor: Colors.deepPurple.shade200,
         title: const Text('Create Contact'),
       ),
       body: Padding(
@@ -91,7 +100,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
               children: [
                 Expanded(
                   child: FilledButton(
-                    onPressed: _saveContact,
+                    onPressed: () => _saveContact(context),
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5.0),

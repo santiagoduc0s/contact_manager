@@ -8,22 +8,21 @@ class ContactCrud extends CRUD {
 
   static ContactCrud get instance => _instance;
 
-  Future<void> create({
+  Future<Contact> create({
     required String firstName,
     required String lastName,
     required String phoneNumber,
   }) async {
-    try {
-      var newContact = Contact()
-        ..name.first = firstName
-        ..name.last = lastName
-        ..phones = [Phone(phoneNumber)];
 
-      newContact = await newContact.insert();
+    var newContact = Contact()
+      ..name.first = firstName
+      ..name.last = lastName
+      ..phones = [Phone(phoneNumber)];
 
-      createController.add(newContact);
-    } catch (e, s) {
-      createController.add(CustomException(e, s));
-    }
+    newContact = await newContact.insert();
+
+    createController.add(newContact);
+
+    return newContact;
   }
 }

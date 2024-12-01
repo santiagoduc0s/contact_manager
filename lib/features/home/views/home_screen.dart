@@ -15,11 +15,13 @@ class HomeScreen extends StatelessWidget {
   }) =>
       GoRoute(
         parentNavigatorKey: parentNavigatorKey,
-        path: HomeScreen.path,
-        name: HomeScreen.path,
+        path: path,
+        name: path,
         builder: (context, state) {
           return BlocProvider<HomeBloc>(
-            create: (context) => HomeBloc()..add(const HomeInit()),
+            create: (context) => HomeBloc()
+              ..add(const HomeInit())
+              ..add(const HomeListen()),
             child: const HomePage(),
           );
         },

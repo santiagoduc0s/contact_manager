@@ -1,9 +1,10 @@
 import 'package:contacts_manager/alerts/alerts.dart';
-import 'package:contacts_manager/features/create_contact/create_contact_screen.dart';
+import 'package:contacts_manager/features/create_contact/views/create_contact_screen.dart';
 import 'package:contacts_manager/features/home/bloc/bloc.dart';
 import 'package:contacts_manager/features/home/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -37,14 +38,6 @@ class HomePage extends StatelessWidget {
     }
   }
 
-  Future<void> navigateToCreateContactPage(BuildContext context) async {
-    final result = await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const CreateContactScreen()),
-    );
-
-    if (result == true) {}
-  }
-
   @override
   Widget build(BuildContext context) {
     final contacts = context.select((HomeBloc bloc) => bloc.state.contacts);
@@ -75,9 +68,11 @@ class HomePage extends StatelessWidget {
       widget = const Stack(
         children: [
           ContactList(),
-          Align(
-            alignment: Alignment.centerRight,
-            child: SliderAlphabet(),
+          SafeArea(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: SliderAlphabet(),
+            ),
           ),
         ],
       );
@@ -127,7 +122,9 @@ class HomePage extends StatelessWidget {
       floatingActionButton: permissionGranted && !isSelectingContacts
           ? FloatingActionButton(
               heroTag: 'goToCreateContactPage',
-              onPressed: () => navigateToCreateContactPage(context),
+              onPressed: () {
+                context.pushNamed(CreateContactScreen.path);
+              },
               tooltip: 'Go to Create Contact Page',
               child: const Icon(Icons.add),
             )
