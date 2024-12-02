@@ -55,6 +55,37 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
     return super.close();
   }
 
+  Map<String, dynamic> _processContacts(List<Contact> contacts) {
+    contacts = contacts.map((contact) {
+      if (contact.displayName.isEmpty) {
+        return contact
+          ..displayName = 'Unnamed Contact'
+          ..name = Name(first: 'Unnamed', last: 'Contact');
+      }
+      return contact;
+    }).toList();
+
+    contacts.sort((a, b) =>
+        a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()));
+
+    final firstLetters = <String>{};
+    final keyValues = <String, GlobalKey>{};
+
+    for (Contact contact in contacts) {
+      final firstChar = contact.displayName[0].toUpperCase();
+      if (RegExp(r'[A-Za-z]').hasMatch(firstChar)) {
+        firstLetters.add(firstChar);
+        keyValues[firstChar] = GlobalKey();
+      }
+    }
+
+    return {
+      'contacts': contacts,
+      'initialLetters': firstLetters.toList(),
+      'keys': keyValues,
+    };
+  }
+
   void _onHomeInit(HomeInit event, Emitter<HomeState> emit) async {
     bool granted = await FlutterContacts.requestPermission();
     emit(state.copyWith(permissionGranted: granted));
@@ -103,44 +134,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
         withPhoto: true,
       );
 
-      contacts = contacts.map((contact) {
-        if (contact.displayName.isEmpty) {
-          return contact
-            ..displayName = 'Unnamed Contact'
-            ..name = Name(
-              first: 'Unnamed',
-              last: 'Contact',
-            );
-        }
-        return contact;
-      }).toList();
-
-      contacts.sort((a, b) {
-        final nameA = a.displayName.toLowerCase();
-        final nameB = b.displayName.toLowerCase();
-        return nameA.compareTo(nameB);
-      });
-
-      final firstLetters = <String>{};
-
-      for (Contact contact in contacts) {
-        final firstChar = contact.displayName[0].toUpperCase();
-
-        if (RegExp(r'[A-Za-z]').hasMatch(firstChar)) {
-          firstLetters.add(firstChar);
-        }
-      }
-
-      final keyValues = <String, GlobalKey>{};
-
-      for (String letter in firstLetters) {
-        keyValues[letter] = GlobalKey();
-      }
+      final processed = _processContacts(contacts);
 
       emit(state.copyWith(
-        contacts: contacts,
-        initialLetters: firstLetters.toList(),
-        keys: keyValues,
+        contacts: processed['contacts'],
+        initialLetters: processed['initialLetters'],
+        keys: processed['keys'],
       ));
     } catch (e) {
       if (kDebugMode) {
@@ -254,81 +253,28 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
   }
 
   void _onAddContact(AddContactHome event, Emitter<HomeState> emit) {
-    if (event.contact.displayName.isEmpty) {
-      event.contact
-        ..displayName = 'Unnamed Contact'
-        ..name = Name(
-          first: 'Unnamed',
-          last: 'Contact',
-        );
-    }
+    final newContacts = [...state.contacts, event.contact];
 
-    final newContacts = [...state.contacts, event.contact]..sort((a, b) {
-        final nameA = a.displayName.toLowerCase();
-        final nameB = b.displayName.toLowerCase();
-        return nameA.compareTo(nameB);
-      });
-
-    final firstLetters = <String>{};
-
-    for (Contact contact in newContacts) {
-      final firstChar = contact.displayName[0].toUpperCase();
-
-      if (RegExp(r'[A-Za-z]').hasMatch(firstChar)) {
-        firstLetters.add(firstChar);
-      }
-    }
-
-    final keyValues = <String, GlobalKey>{};
-
-    for (String letter in firstLetters) {
-      keyValues[letter] = GlobalKey();
-    }
+    final processed = _processContacts(newContacts);
 
     emit(state.copyWith(
-      contacts: newContacts,
-      initialLetters: firstLetters.toList(),
-      keys: keyValues,
+      contacts: processed['contacts'],
+      initialLetters: processed['initialLetters'],
+      keys: processed['keys'],
     ));
   }
 
   void _onUpdateContact(UpdateContactHome event, Emitter<HomeState> emit) {
-    if (event.contact.displayName.isEmpty) {
-      event.contact
-        ..displayName = 'Unnamed Contact'
-        ..name = Name(
-          first: 'Unnamed',
-          last: 'Contact',
-        );
-    }
-
     final newContacts = state.contacts.map((contact) {
-      if (contact.id == event.contact.id) {
-        return event.contact;
-      }
-      return contact;
+      return contact.id == event.contact.id ? event.contact : contact;
     }).toList();
 
-    final firstLetters = <String>{};
-
-    for (Contact contact in newContacts) {
-      final firstChar = contact.displayName[0].toUpperCase();
-
-      if (RegExp(r'[A-Za-z]').hasMatch(firstChar)) {
-        firstLetters.add(firstChar);
-      }
-    }
-
-    final keyValues = <String, GlobalKey>{};
-
-    for (String letter in firstLetters) {
-      keyValues[letter] = GlobalKey();
-    }
+    final processed = _processContacts(newContacts);
 
     emit(state.copyWith(
-      contacts: newContacts,
-      initialLetters: firstLetters.toList(),
-      keys: keyValues,
+      contacts: processed['contacts'],
+      initialLetters: processed['initialLetters'],
+      keys: processed['keys'],
     ));
   }
 
@@ -337,26 +283,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
       return !event.ids.contains(contact.id);
     }).toList();
 
-    final firstLetters = <String>{};
-
-    for (Contact contact in newContacts) {
-      final firstChar = contact.displayName[0].toUpperCase();
-
-      if (RegExp(r'[A-Za-z]').hasMatch(firstChar)) {
-        firstLetters.add(firstChar);
-      }
-    }
-
-    final keyValues = <String, GlobalKey>{};
-
-    for (String letter in firstLetters) {
-      keyValues[letter] = GlobalKey();
-    }
+    final processed = _processContacts(newContacts);
 
     emit(state.copyWith(
-      contacts: newContacts,
-      initialLetters: firstLetters.toList(),
-      keys: keyValues,
+      contacts: processed['contacts'],
+      initialLetters: processed['initialLetters'],
+      keys: processed['keys'],
     ));
   }
 }
