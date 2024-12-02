@@ -6,7 +6,22 @@ import 'package:go_router/go_router.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class CreateContactPage extends StatelessWidget {
-  const CreateContactPage({super.key});
+  CreateContactPage({super.key});
+
+  final FormGroup form = FormGroup({
+    'firstName': FormControl<String>(
+      value: '',
+      validators: [Validators.required],
+    ),
+    'lastName': FormControl<String>(
+      value: '',
+      validators: [],
+    ),
+    'phone': FormControl<String>(
+      value: '',
+      validators: [Validators.required],
+    ),
+  });
 
   Future<void> _saveContact(BuildContext context) async {
     try {
@@ -26,21 +41,6 @@ class CreateContactPage extends StatelessWidget {
       return;
     }
   }
-
-  FormGroup get form => FormGroup({
-        'firstName': FormControl<String>(
-          value: '',
-          validators: [Validators.required],
-        ),
-        'lastName': FormControl<String>(
-          value: '',
-          validators: [],
-        ),
-        'phone': FormControl<String>(
-          value: '',
-          validators: [Validators.required],
-        ),
-      });
 
   @override
   Widget build(BuildContext context) {

@@ -16,7 +16,7 @@ class CreateContactScreen extends StatelessWidget {
         path: path,
         name: path,
         builder: (context, state) {
-          return const CreateContactPage();
+          return CreateContactPage();
         },
         routes: routes,
       );

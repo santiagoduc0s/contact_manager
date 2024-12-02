@@ -16,13 +16,13 @@ class EditContactPage extends StatefulWidget {
 }
 
 class _EditContactPageState extends State<EditContactPage> {
-  late final FormGroup _form;
+  late final FormGroup form;
 
   @override
   void initState() {
     super.initState();
 
-    _form = FormGroup({
+    form = FormGroup({
       'firstName': FormControl<String>(
         value: widget.contact.name.first,
         validators: [Validators.required],
@@ -59,8 +59,6 @@ class _EditContactPageState extends State<EditContactPage> {
       return;
     }
   }
-
-  FormGroup get form => _form;
 
   @override
   Widget build(BuildContext context) {
