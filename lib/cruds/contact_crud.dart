@@ -43,4 +43,23 @@ class ContactCrud extends CRUD {
 
     return contact;
   }
+
+  Future<List<String>> delete(List<String> ids) async {
+    final tasks = ids.map((id) async {
+      final contact = await FlutterContacts.getContact(id);
+      if (contact == null) return null;
+
+      await contact.delete();
+
+      return id;
+    }).toList();
+
+    final results = await Future.wait(tasks);
+
+    final deletedIds = results.whereType<String>().toList();
+
+    deleteController.add(deletedIds);
+
+    return deletedIds;
+  }
 }

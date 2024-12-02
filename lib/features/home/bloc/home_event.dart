@@ -49,3 +49,9 @@ class UpdateContactHome extends HomeEvent {
 
   final Contact contact;
 }
+
+class DeleteContactHome extends HomeEvent {
+  const DeleteContactHome(this.ids);
+
+  final List<String> ids;
+}

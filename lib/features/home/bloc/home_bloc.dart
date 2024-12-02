@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:contacts_manager/alerts/alerts.dart';
+import 'package:contacts_manager/config/app_keys.dart';
 import 'package:contacts_manager/cruds/cruds.dart';
 import 'package:contacts_manager/features/home/bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
   HomeBloc({
@@ -22,6 +25,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
     on<ChangeSelectedLetterIndex>(_onChangeSelectedLetterIndex);
     on<AddContactHome>(_onAddContact);
     on<UpdateContactHome>(_onUpdateContact);
+    on<DeleteContactHome>(_onDeleteContact);
 
     WidgetsBinding.instance.addObserver(this);
   }
@@ -30,6 +34,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
 
   late final StreamSubscription<Object> contactCreateSubscription;
   late final StreamSubscription<Object> contactUpdateSubscription;
+  late final StreamSubscription<Object> contactDeleteSubscription;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -45,6 +50,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
 
     contactCreateSubscription.cancel();
     contactUpdateSubscription.cancel();
+    contactDeleteSubscription.cancel();
 
     return super.close();
   }
@@ -71,6 +77,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
       if (contact is! Contact) return;
 
       add(UpdateContactHome(contact));
+    });
+
+    contactDeleteSubscription =
+        ContactCrud.instance.deleteController.stream.listen((ids) {
+      if (ids is! List<String>) return;
+
+      add(DeleteContactHome(ids));
     });
   }
 
@@ -173,22 +186,52 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
     DeleteSelectedContacts event,
     Emitter<HomeState> emit,
   ) async {
-    final futures = <Future>[];
-    for (Contact contact in state.selectedContacts) {
-      futures.add(contact.delete());
+    final confirmDelete = await CustomDialog.confirm(
+      title: const Text('Confirm Deletion'),
+      content: Text(
+          'Are you sure you want to delete ${state.selectedContacts.length} selected contacts?'),
+      actions: [
+        TextButton(
+          onPressed: () {
+            AppKeys.getRootContext().pop(false);
+          },
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () {
+            AppKeys.getRootContext().pop(true);
+          },
+          child: const Text('Delete'),
+        ),
+      ],
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      final ids = state.selectedContacts.map((contact) => contact.id).toList();
+
+      final deletedIds = await ContactCrud.instance.delete(ids);
+
+      emit(state.copyWith(
+        selectedContacts: {},
+        isSelectingContacts: false,
+      ));
+
+      add(DeleteContactHome(deletedIds));
+
+      if (deletedIds.length > 1) {
+        CustomSnackbar.success(
+          text: '${deletedIds.length} contacts were deleted',
+        );
+      } else {
+        CustomSnackbar.success(
+          text: 'The contact was deleted',
+        );
+      }
+    } catch (e) {
+      CustomSnackbar.error(text: 'Something happened');
     }
-
-    await Future.wait(futures);
-
-    final newContacts = state.contacts.where((contact) {
-      return !state.selectedContacts.contains(contact);
-    }).toList();
-
-    emit(state.copyWith(
-      contacts: newContacts,
-      selectedContacts: {},
-      isSelectingContacts: false,
-    ));
   }
 
   void _onChangeSelectedLetterIndex(
@@ -264,6 +307,34 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
         return event.contact;
       }
       return contact;
+    }).toList();
+
+    final firstLetters = <String>{};
+
+    for (Contact contact in newContacts) {
+      final firstChar = contact.displayName[0].toUpperCase();
+
+      if (RegExp(r'[A-Za-z]').hasMatch(firstChar)) {
+        firstLetters.add(firstChar);
+      }
+    }
+
+    final keyValues = <String, GlobalKey>{};
+
+    for (String letter in firstLetters) {
+      keyValues[letter] = GlobalKey();
+    }
+
+    emit(state.copyWith(
+      contacts: newContacts,
+      initialLetters: firstLetters.toList(),
+      keys: keyValues,
+    ));
+  }
+
+  void _onDeleteContact(DeleteContactHome event, Emitter<HomeState> emit) {
+    final newContacts = state.contacts.where((contact) {
+      return !event.ids.contains(contact.id);
     }).toList();
 
     final firstLetters = <String>{};

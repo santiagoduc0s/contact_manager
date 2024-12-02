@@ -1,4 +1,3 @@
-import 'package:contacts_manager/alerts/alerts.dart';
 import 'package:contacts_manager/features/create_contact/views/create_contact_screen.dart';
 import 'package:contacts_manager/features/home/bloc/bloc.dart';
 import 'package:contacts_manager/features/home/widgets/widgets.dart';
@@ -8,35 +7,6 @@ import 'package:go_router/go_router.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  Future<void> confirmDeleteSelectedContacts(BuildContext context) async {
-    final selectedContacts = context.read<HomeBloc>().state.selectedContacts;
-
-    final confirmDelete = await CustomDialog.confirm(
-      title: const Text('Confirm Deletion'),
-      content: Text(
-          'Are you sure you want to delete ${selectedContacts.length} selected contacts?'),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop(false);
-          },
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop(true);
-          },
-          child: const Text('Delete'),
-        ),
-      ],
-    );
-
-    if (confirmDelete) {
-      if (!context.mounted) return;
-      context.read<HomeBloc>().add(const DeleteSelectedContacts());
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +59,7 @@ class HomePage extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.delete_outline_outlined),
               onPressed: () {
-                confirmDeleteSelectedContacts(context);
+                context.read<HomeBloc>().add(const DeleteSelectedContacts());
               },
             ),
           IconButton(
