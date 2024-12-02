@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class UITextStyle {
   static final _baseTextStyle = TextStyle(
-    fontFamily: GoogleFonts.poppins().fontFamily,
+    fontFamily: GoogleFonts.robotoSlab().fontFamily,
     color: UIColors.black,
     fontWeight: UIFontWeight.regular,
     letterSpacing: 0.4,

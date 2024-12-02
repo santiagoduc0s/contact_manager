@@ -1,5 +1,6 @@
 import 'package:contacts_manager/config/config.dart';
 import 'package:contacts_manager/router/router.dart';
+import 'package:contacts_manager/ui/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -22,12 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       scaffoldMessengerKey: AppKeys.scaffoldMessengerKey,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-        dialogBackgroundColor: Colors.white,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: UITheme.standard,
       routerConfig: AppRouter.router,
     );
   }

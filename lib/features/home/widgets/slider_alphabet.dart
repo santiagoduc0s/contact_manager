@@ -1,12 +1,17 @@
 import 'package:contacts_manager/features/home/bloc/bloc.dart';
 import 'package:contacts_manager/features/home/widgets/widgets.dart';
+import 'package:contacts_manager/ui/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-class SliderAlphabet extends StatelessWidget {
+class SliderAlphabet extends StatefulWidget {
   const SliderAlphabet({super.key});
 
+  @override
+  State<SliderAlphabet> createState() => _SliderAlphabetState();
+}
+
+class _SliderAlphabetState extends State<SliderAlphabet> {
   @override
   Widget build(BuildContext context) {
     final initialLetters =
@@ -31,7 +36,7 @@ class SliderAlphabet extends StatelessWidget {
             overlayColor: Colors.transparent,
           ),
           child: Slider(
-            min: 0,
+            min: UISpacing.zero,
             max: initialLetters.length.toDouble() - 1,
             value: selectedLetterIndex.toDouble(),
             label: initialLetters[selectedLetterIndex],

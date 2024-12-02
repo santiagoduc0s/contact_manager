@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:contacts_manager/ui/ui.dart';
 import 'package:flutter/material.dart';
 
 class LetterSliderTrackShape extends SliderTrackShape {
@@ -66,12 +67,10 @@ class LetterSliderTrackShape extends SliderTrackShape {
       final double letterY = trackRect.top + trackRect.height / 2;
 
       textPainter.text = TextSpan(
-        text: letter,
-        style: TextStyle(
-          color: sliderTheme.activeTrackColor,
-          fontSize: 14.0,
-        ),
-      );
+          text: letter,
+          style: UITextStyle.labelLarge.copyWith(
+            color: Colors.deepPurple.shade300,
+          ));
 
       textPainter.layout();
 
