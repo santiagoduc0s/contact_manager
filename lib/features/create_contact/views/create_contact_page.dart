@@ -1,6 +1,6 @@
 import 'package:contacts_manager/alerts/alerts.dart';
 import 'package:contacts_manager/cruds/cruds.dart';
-import 'package:contacts_manager/ui/ui_spacing.dart';
+import 'package:contacts_manager/ui/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -44,13 +44,20 @@ class CreateContactPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple.shade200,
         title: const Text('Create Contact'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(UISpacing.space4x),
+        padding: EdgeInsets.only(
+          top: UISpacing.space4x,
+          bottom: bottomPadding > 0 ? bottomPadding : UISpacing.space4x,
+          left: UISpacing.space4x,
+          right: UISpacing.space4x,
+        ),
         child: ReactiveFormBuilder(
             form: () => form,
             builder: (context, form, child) {
@@ -59,45 +66,24 @@ class CreateContactPage extends StatelessWidget {
                   ReactiveTextField<String>(
                     formControlName: 'firstName',
                     textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
+                    decoration: UIInputStyle.defaultStyle.copyWith(
                       labelText: 'First Name',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(UISpacing.space3x),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.deepPurple),
-                        borderRadius: BorderRadius.circular(UISpacing.space3x),
-                      ),
                     ),
                   ),
                   const SizedBox(height: UISpacing.space4x),
                   ReactiveTextField<String>(
                     formControlName: 'lastName',
                     textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
+                    decoration: UIInputStyle.defaultStyle.copyWith(
                       labelText: 'Last Name',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(UISpacing.space3x),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.deepPurple),
-                        borderRadius: BorderRadius.circular(UISpacing.space3x),
-                      ),
                     ),
                   ),
                   const SizedBox(height: UISpacing.space4x),
                   ReactiveTextField<String>(
                     formControlName: 'phone',
                     textInputAction: TextInputAction.done,
-                    decoration: InputDecoration(
+                    decoration: UIInputStyle.defaultStyle.copyWith(
                       labelText: 'Phone Number',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(UISpacing.space3x),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.deepPurple),
-                        borderRadius: BorderRadius.circular(UISpacing.space3x),
-                      ),
                     ),
                   ),
                   const Spacer(),
@@ -112,11 +98,7 @@ class CreateContactPage extends StatelessWidget {
                               form.markAllAsTouched();
                             }
                           },
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                          ),
+                          style: UIButtonStyle.primaryFilled,
                           child: const Text(
                             'Save Contact',
                             style: TextStyle(fontSize: 15),

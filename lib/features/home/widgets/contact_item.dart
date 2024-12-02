@@ -1,5 +1,6 @@
 import 'package:contacts_manager/features/edit_contact/views/edit_contact_screen.dart';
 import 'package:contacts_manager/features/home/bloc/bloc.dart';
+import 'package:contacts_manager/ui/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,15 +33,12 @@ class ContactItem extends StatelessWidget {
           Padding(
             key: keyDivider,
             padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 10.0,
+              horizontal: UISpacing.space4x,
+              vertical: UISpacing.space3x,
             ),
             child: Text(
               firstLetterOfName,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: UITextStyle.titleMedium,
             ),
           ),
         ListTile(

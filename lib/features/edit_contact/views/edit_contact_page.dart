@@ -1,8 +1,10 @@
 import 'package:contacts_manager/alerts/alerts.dart';
 import 'package:contacts_manager/cruds/cruds.dart';
+import 'package:contacts_manager/ui/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
 class EditContactPage extends StatefulWidget {
   final Contact contact;
@@ -14,39 +16,37 @@ class EditContactPage extends StatefulWidget {
 }
 
 class _EditContactPageState extends State<EditContactPage> {
-  late TextEditingController _firstNameController;
-  late TextEditingController _lastNameController;
-  late TextEditingController _phoneController;
+  late final FormGroup _form;
 
   @override
   void initState() {
     super.initState();
 
-    _firstNameController =
-        TextEditingController(text: widget.contact.name.first);
-    _lastNameController = TextEditingController(text: widget.contact.name.last);
-    _phoneController = TextEditingController(
-      text: widget.contact.phones.isNotEmpty
-          ? widget.contact.phones.first.number
-          : '',
-    );
-  }
-
-  @override
-  dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _phoneController.dispose();
-    super.dispose();
+    _form = FormGroup({
+      'firstName': FormControl<String>(
+        value: widget.contact.name.first,
+        validators: [Validators.required],
+      ),
+      'lastName': FormControl<String>(
+        value: widget.contact.name.last,
+        validators: [],
+      ),
+      'phone': FormControl<String>(
+        value: widget.contact.phones.isNotEmpty
+            ? widget.contact.phones.first.number
+            : '',
+        validators: [Validators.required],
+      ),
+    });
   }
 
   Future<void> _updateContact(BuildContext context) async {
     try {
       final contact = await ContactCrud.instance.update(
         id: widget.contact.id,
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        phoneNumber: _phoneController.text,
+        firstName: form.control('firstName').value,
+        lastName: form.control('lastName').value,
+        phoneNumber: form.control('phone').value,
       );
 
       CustomSnackbar.success(text: '${contact.name.first} was updated');
@@ -60,80 +60,76 @@ class _EditContactPageState extends State<EditContactPage> {
     }
   }
 
+  FormGroup get form => _form;
+
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple.shade200,
         title: const Text('Edit Contact'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _firstNameController,
-              decoration: InputDecoration(
-                labelText: 'First Name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.deepPurple),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            TextField(
-              controller: _lastNameController,
-              decoration: InputDecoration(
-                labelText: 'Last Name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.deepPurple),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            TextField(
-              controller: _phoneController,
-              decoration: InputDecoration(
-                labelText: 'Phone Number',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.deepPurple),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-              keyboardType: TextInputType.phone,
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () => _updateContact(context),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'Save Changes',
-                      style: TextStyle(fontSize: 15),
+        padding: EdgeInsets.only(
+          top: UISpacing.space4x,
+          bottom: bottomPadding > 0 ? bottomPadding : UISpacing.space4x,
+          left: UISpacing.space4x,
+          right: UISpacing.space4x,
+        ),
+        child: ReactiveFormBuilder(
+            form: () => form,
+            builder: (context, form, child) {
+              return Column(
+                children: [
+                  ReactiveTextField<String>(
+                    formControlName: 'firstName',
+                    textInputAction: TextInputAction.next,
+                    decoration: UIInputStyle.defaultStyle.copyWith(
+                      labelText: 'First Name',
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
+                  const SizedBox(height: UISpacing.space4x),
+                  ReactiveTextField<String>(
+                    formControlName: 'lastName',
+                    textInputAction: TextInputAction.next,
+                    decoration: UIInputStyle.defaultStyle.copyWith(
+                      labelText: 'Last Name',
+                    ),
+                  ),
+                  const SizedBox(height: UISpacing.space4x),
+                  ReactiveTextField<String>(
+                    formControlName: 'phone',
+                    textInputAction: TextInputAction.done,
+                    decoration: UIInputStyle.defaultStyle.copyWith(
+                      labelText: 'Phone Number',
+                    ),
+                  ),
+                  const Spacer(),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: () {
+                            if (form.valid) {
+                              _updateContact(context);
+                            } else {
+                              form.markAllAsTouched();
+                            }
+                          },
+                          style: UIButtonStyle.primaryFilled,
+                          child: const Text(
+                            'Edit Contact',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            }),
       ),
     );
   }

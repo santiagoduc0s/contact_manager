@@ -94,7 +94,7 @@ class HomePage extends StatelessWidget {
             ),
           IconButton(
             icon: isSelectingContacts
-                ? const Icon(Icons.cancel_outlined)
+                ? const Icon(Icons.close_outlined)
                 : const Icon(Icons.select_all),
             onPressed: () {
               context.read<HomeBloc>().add(const ToggleIsSelectingContacts());
