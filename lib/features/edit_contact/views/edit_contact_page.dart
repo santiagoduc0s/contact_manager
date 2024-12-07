@@ -62,25 +62,26 @@ class _EditContactPageState extends State<EditContactPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    var bottomPadding = MediaQuery.of(context).padding.bottom;
+    if (bottomPadding == 0) {
+      bottomPadding = UISpacing.space4x;
+    }
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple.shade200,
         title: const Text('Edit Contact'),
       ),
-      body: Padding(
-        padding: EdgeInsets.only(
-          top: UISpacing.space4x,
-          bottom: bottomPadding > 0 ? bottomPadding : UISpacing.space4x,
-          left: UISpacing.space4x,
-          right: UISpacing.space4x,
-        ),
-        child: ReactiveFormBuilder(
-            form: () => form,
-            builder: (context, form, child) {
-              return Column(
+      body: CustomScrollView(
+        physics: const ClampingScrollPhysics(),
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: UISpacing.space4x),
+              child: Column(
                 children: [
+                  const SizedBox(height: UISpacing.space4x),
                   Hero(
                     tag: widget.contact.id,
                     child: widget.contact.photo != null
@@ -97,30 +98,54 @@ class _EditContactPageState extends State<EditContactPage> {
                           ),
                   ),
                   const SizedBox(height: UISpacing.space4x),
-                  ReactiveTextField<String>(
-                    formControlName: 'firstName',
-                    textInputAction: TextInputAction.next,
-                    decoration: UIInputStyle.defaultStyle.copyWith(
-                      labelText: 'First Name',
-                    ),
+                  ReactiveFormBuilder(
+                    form: () => form,
+                    builder: (context, form, child) {
+                      return Column(
+                        children: [
+                          ReactiveTextField<String>(
+                            formControlName: 'firstName',
+                            textInputAction: TextInputAction.next,
+                            decoration: UIInputStyle.defaultStyle.copyWith(
+                              labelText: 'First Name',
+                            ),
+                          ),
+                          const SizedBox(height: UISpacing.space4x),
+                          ReactiveTextField<String>(
+                            formControlName: 'lastName',
+                            textInputAction: TextInputAction.next,
+                            decoration: UIInputStyle.defaultStyle.copyWith(
+                              labelText: 'Last Name',
+                            ),
+                          ),
+                          const SizedBox(height: UISpacing.space4x),
+                          ReactiveTextField<String>(
+                            formControlName: 'phone',
+                            textInputAction: TextInputAction.done,
+                            decoration: UIInputStyle.defaultStyle.copyWith(
+                              labelText: 'Phone Number',
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                  const SizedBox(height: UISpacing.space4x),
-                  ReactiveTextField<String>(
-                    formControlName: 'lastName',
-                    textInputAction: TextInputAction.next,
-                    decoration: UIInputStyle.defaultStyle.copyWith(
-                      labelText: 'Last Name',
-                    ),
-                  ),
-                  const SizedBox(height: UISpacing.space4x),
-                  ReactiveTextField<String>(
-                    formControlName: 'phone',
-                    textInputAction: TextInputAction.done,
-                    decoration: UIInputStyle.defaultStyle.copyWith(
-                      labelText: 'Phone Number',
-                    ),
-                  ),
-                  const Spacer(),
+                ],
+              ),
+            ),
+          ),
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: UISpacing.space4x,
+                right: UISpacing.space4x,
+                top: UISpacing.space4x,
+                bottom: bottomPadding,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
                   Row(
                     children: [
                       Expanded(
@@ -142,8 +167,10 @@ class _EditContactPageState extends State<EditContactPage> {
                     ],
                   ),
                 ],
-              );
-            }),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
