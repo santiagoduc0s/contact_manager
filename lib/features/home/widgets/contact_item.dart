@@ -43,9 +43,18 @@ class ContactItem extends StatelessWidget {
           ),
         ListTile(
           tileColor: isSelected ? Colors.deepPurple.withOpacity(0.2) : null,
-          leading: contact.photo != null
-              ? CircleAvatar(backgroundImage: MemoryImage(contact.photo!))
-              : const CircleAvatar(child: Icon(Icons.person)),
+          leading: Hero(
+            tag: contact.id,
+            child: contact.photo != null
+                ? CircleAvatar(
+                    radius: UISpacing.space5x,
+                    backgroundImage: MemoryImage(contact.photo!),
+                  )
+                : const CircleAvatar(
+                    radius: UISpacing.space5x,
+                    child: Icon(Icons.person, size: UISpacing.space6x),
+                  ),
+          ),
           title: Text(
             '${contact.name.first} ${contact.name.last}',
             style:

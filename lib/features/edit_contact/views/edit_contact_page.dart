@@ -81,6 +81,22 @@ class _EditContactPageState extends State<EditContactPage> {
             builder: (context, form, child) {
               return Column(
                 children: [
+                  Hero(
+                    tag: widget.contact.id,
+                    child: widget.contact.photo != null
+                        ? CircleAvatar(
+                            radius: UISpacing.space20x,
+                            backgroundImage: MemoryImage(widget.contact.photo!),
+                          )
+                        : const CircleAvatar(
+                            radius: UISpacing.space20x,
+                            child: Icon(
+                              Icons.person,
+                              size: UISpacing.space19x,
+                            ),
+                          ),
+                  ),
+                  const SizedBox(height: UISpacing.space4x),
                   ReactiveTextField<String>(
                     formControlName: 'firstName',
                     textInputAction: TextInputAction.next,
@@ -117,9 +133,9 @@ class _EditContactPageState extends State<EditContactPage> {
                             }
                           },
                           style: UIButtonStyle.primaryFilled,
-                          child: const Text(
+                          child: Text(
                             'Edit Contact',
-                            style: TextStyle(fontSize: 15),
+                            style: UITextStyle.bodyLarge,
                           ),
                         ),
                       ),
