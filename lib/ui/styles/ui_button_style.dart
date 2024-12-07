@@ -14,15 +14,15 @@ class UIButtonStyle {
     backgroundColor: WidgetStateProperty.resolveWith<Color>(
       (Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return Colors.deepPurple.shade400;
+          return Colors.deepPurple.shade200;
         }
         if (states.contains(WidgetState.pressed)) {
-          return Colors.deepPurple.shade400;
+          return Colors.deepPurple.shade200;
         }
         if (states.contains(WidgetState.hovered)) {
-          return Colors.deepPurple.shade400;
+          return Colors.deepPurple.shade200;
         }
-        return Colors.deepPurple.shade400;
+        return Colors.deepPurple.shade200;
       },
     ),
     foregroundColor: WidgetStateProperty.all(UIColors.white),

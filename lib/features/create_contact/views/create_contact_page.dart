@@ -99,9 +99,9 @@ class CreateContactPage extends StatelessWidget {
                             }
                           },
                           style: UIButtonStyle.primaryFilled,
-                          child: const Text(
+                          child: Text(
                             'Save Contact',
-                            style: TextStyle(fontSize: 15),
+                            style: UITextStyle.bodyLarge,
                           ),
                         ),
                       ),

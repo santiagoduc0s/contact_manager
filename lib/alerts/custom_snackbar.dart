@@ -180,10 +180,10 @@ class CustomSnackbar {
 
     isSnackbarActive = true;
 
-    Color backgroundColor = UIColors.success;
+    Color backgroundColor = Colors.deepPurple.shade200;
 
     if (status == CustomSnackbarStatus.error) {
-      backgroundColor = UIColors.danger;
+      backgroundColor = UIColors.error;
     }
 
     if (status == CustomSnackbarStatus.warning) {
@@ -240,7 +240,7 @@ class CustomSnackbar {
                           text,
                           style: textStyle ??
                               UITextStyle.bodySmall.copyWith(
-                                color: UIColors.white,
+                                color: UIColors.black,
                               ),
                         ),
                       ),
@@ -254,7 +254,7 @@ class CustomSnackbar {
                             constraints: BoxConstraints(),
                             icon: Icon(
                               Icons.close,
-                              color: UIColors.white,
+                              color: UIColors.black,
                               size: UISpacing.space2x + UISpacing.px2,
                             ),
                           ),
