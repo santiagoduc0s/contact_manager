@@ -26,6 +26,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
     on<AddContactHome>(_onAddContact);
     on<UpdateContactHome>(_onUpdateContact);
     on<DeleteContactHome>(_onDeleteContact);
+    on<SearchContacts>(_onSearchContacts);
 
     WidgetsBinding.instance.addObserver(this);
   }
@@ -87,11 +88,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
   }
 
   void _onHomeInit(HomeInit event, Emitter<HomeState> emit) async {
-    bool granted = await FlutterContacts.requestPermission();
-    emit(state.copyWith(permissionGranted: granted));
+    emit(state.copyWith(isRequestingPermission: true));
 
-    if (granted) {
-      add(const FetchContacts());
+    try {
+      bool granted = await FlutterContacts.requestPermission();
+
+      emit(state.copyWith(permissionGranted: granted));
+
+      if (granted) {
+        add(const FetchContacts());
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    } finally {
+      emit(state.copyWith(isRequestingPermission: false));
     }
   }
 
@@ -286,6 +298,33 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with WidgetsBindingObserver {
     final processed = _processContacts(newContacts);
 
     emit(state.copyWith(
+      contacts: processed['contacts'],
+      initialLetters: processed['initialLetters'],
+      keys: processed['keys'],
+    ));
+  }
+
+  Future<void> _onSearchContacts(
+    SearchContacts event,
+    Emitter<HomeState> emit,
+  ) async {
+    List<Contact> contacts = await FlutterContacts.getContacts(
+      withProperties: true,
+      withPhoto: true,
+    );
+
+    if (event.query.isNotEmpty) {
+      contacts = contacts.where((contact) {
+        return contact.displayName
+            .toLowerCase()
+            .contains(event.query.toLowerCase());
+      }).toList();
+    }
+
+    final processed = _processContacts(contacts);
+
+    emit(state.copyWith(
+      selectedLetterIndex: 0,
       contacts: processed['contacts'],
       initialLetters: processed['initialLetters'],
       keys: processed['keys'],

@@ -7,6 +7,7 @@ class HomeState extends Equatable {
     required this.initialLetters,
     required this.contacts,
     required this.isFetchingContacts,
+    required this.isRequestingPermission,
     required this.permissionGranted,
     required this.selectedContacts,
     required this.isSelectingContacts,
@@ -18,6 +19,7 @@ class HomeState extends Equatable {
     this.initialLetters = const [],
     this.contacts = const [],
     this.isFetchingContacts = false,
+    this.isRequestingPermission = true,
     this.permissionGranted = false,
     this.selectedContacts = const {},
     this.isSelectingContacts = false,
@@ -28,6 +30,7 @@ class HomeState extends Equatable {
   final List<String> initialLetters;
   final List<Contact> contacts;
   final bool isFetchingContacts;
+  final bool isRequestingPermission;
   final bool permissionGranted;
   final Set<Contact> selectedContacts;
   final bool isSelectingContacts;
@@ -38,6 +41,7 @@ class HomeState extends Equatable {
     List<String>? initialLetters,
     List<Contact>? contacts,
     bool? isFetchingContacts,
+    bool? isRequestingPermission,
     bool? permissionGranted,
     Set<Contact>? selectedContacts,
     bool? isSelectingContacts,
@@ -48,6 +52,7 @@ class HomeState extends Equatable {
       initialLetters: initialLetters ?? this.initialLetters,
       contacts: contacts ?? this.contacts,
       isFetchingContacts: isFetchingContacts ?? this.isFetchingContacts,
+      isRequestingPermission: isRequestingPermission ?? this.isRequestingPermission,
       permissionGranted: permissionGranted ?? this.permissionGranted,
       selectedContacts: selectedContacts ?? this.selectedContacts,
       isSelectingContacts: isSelectingContacts ?? this.isSelectingContacts,
@@ -61,6 +66,7 @@ class HomeState extends Equatable {
         initialLetters,
         contacts,
         isFetchingContacts,
+        isRequestingPermission,
         permissionGranted,
         selectedContacts,
         isSelectingContacts,

@@ -55,3 +55,9 @@ class DeleteContactHome extends HomeEvent {
 
   final List<String> ids;
 }
+
+class SearchContacts extends HomeEvent {
+  const SearchContacts(this.query);
+
+  final String query;
+}

@@ -1,3 +1,4 @@
+export 'app_bar_home.dart';
 export 'contact_item.dart';
 export 'contact_list.dart';
 export 'letter_slider_track_shape.dart';

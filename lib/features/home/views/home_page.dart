@@ -3,45 +3,53 @@ import 'package:contacts_manager/features/home/bloc/bloc.dart';
 import 'package:contacts_manager/features/home/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:animate_do/animate_do.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  bool isKeyboardVisible(BuildContext context) {
+    return MediaQuery.of(context).viewInsets.bottom > 0;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final contacts = context.select((HomeBloc bloc) => bloc.state.contacts);
+    context.select((HomeBloc bloc) => bloc.state.contacts);
 
-    final permissionGranted =
+    bool permissionGranted =
         context.select((HomeBloc bloc) => bloc.state.permissionGranted);
 
-    final isFetchingContacts =
+    bool isFetchingContacts =
         context.select((HomeBloc bloc) => bloc.state.isFetchingContacts);
 
-    final selectedContacts =
-        context.select((HomeBloc bloc) => bloc.state.selectedContacts);
+    bool isRequestingPermission =
+        context.select((HomeBloc bloc) => bloc.state.isRequestingPermission);
 
-    final isSelectingContacts =
+    bool isSelectingContacts =
         context.select((HomeBloc bloc) => bloc.state.isSelectingContacts);
+
+    bool keyboardVisible = isKeyboardVisible(context);
 
     Widget widget;
 
-    if (!permissionGranted && !isFetchingContacts) {
-      widget = const RequestContactPermission();
-    } else if (isFetchingContacts) {
+    if (isFetchingContacts || isRequestingPermission) {
       widget = const Center(child: CircularProgressIndicator());
-    } else if (contacts.isEmpty) {
-      widget = const Center(
-        child: Text('No contacts found.'),
-      );
+    } else if (!permissionGranted) {
+      widget = const RequestContactPermission();
     } else {
-      widget = const Stack(
+      widget = Stack(
         children: [
-          ContactList(),
+          const ContactList(),
           SafeArea(
             child: Align(
               alignment: Alignment.centerRight,
-              child: SliderAlphabet(),
+              child: FadeInRight(
+                animate: !keyboardVisible,
+                duration: const Duration(milliseconds: 300),
+                child: const SliderAlphabet(),
+              ),
             ),
           ),
         ],
@@ -49,29 +57,7 @@ class HomePage extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.deepPurple.shade200,
-        scrolledUnderElevation: 0.0,
-        centerTitle: false,
-        title: const Text('Contacts'),
-        actions: [
-          if (isSelectingContacts && selectedContacts.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.delete_outline_outlined),
-              onPressed: () {
-                context.read<HomeBloc>().add(const DeleteSelectedContacts());
-              },
-            ),
-          IconButton(
-            icon: isSelectingContacts
-                ? const Icon(Icons.close_outlined)
-                : const Icon(Icons.select_all),
-            onPressed: () {
-              context.read<HomeBloc>().add(const ToggleIsSelectingContacts());
-            },
-          ),
-        ],
-      ),
+      appBar: const AppBarHome(),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 800),
         transitionBuilder: (Widget child, Animation<double> animation) {
@@ -89,16 +75,17 @@ class HomePage extends StatelessWidget {
         },
         child: widget,
       ),
-      floatingActionButton: permissionGranted && !isSelectingContacts
-          ? FloatingActionButton(
-              heroTag: 'goToCreateContactPage',
-              onPressed: () {
-                context.pushNamed(CreateContactScreen.path);
-              },
-              tooltip: 'Go to Create Contact Page',
-              child: const Icon(Icons.add),
-            )
-          : null,
+      floatingActionButton:
+          permissionGranted && !isSelectingContacts && !keyboardVisible
+              ? FloatingActionButton(
+                  heroTag: 'goToCreateContactPage',
+                  onPressed: () {
+                    context.pushNamed(CreateContactScreen.path);
+                  },
+                  tooltip: 'Go to Create Contact Page',
+                  child: const Icon(Icons.add),
+                )
+              : null,
     );
   }
 }
