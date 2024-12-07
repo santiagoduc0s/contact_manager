@@ -20,16 +20,18 @@ class _SliderAlphabetState extends State<SliderAlphabet> {
     final selectedLetterIndex =
         context.select((HomeBloc bloc) => bloc.state.selectedLetterIndex);
 
+    if (initialLetters.length <= 1) {
+      return const SizedBox();
+    }
+
     return SizedBox(
-      height: 500,
-      width: 70,
+      height: UISpacing.space50x * 2,
+      width: UISpacing.space16x,
       child: RotatedBox(
         quarterTurns: 1,
         child: SliderTheme(
           data: SliderThemeData(
-            trackShape: LetterSliderTrackShape(
-              lettersList: initialLetters,
-            ),
+            trackShape: LetterSliderTrackShape(lettersList: initialLetters),
             thumbShape:
                 CustomThumbShape(letter: initialLetters[selectedLetterIndex]),
             thumbColor: Colors.deepPurple,
