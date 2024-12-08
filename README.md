@@ -8,6 +8,7 @@ You can find the apps in the next links:
 * [App Store](https://apps.apple.com/gb/app/contact/id6737725485?platform=iphone)
 * [Play Store](https://play.google.com/apps/testing/com.ducos.contactsmanager) (I need 20 testers to upload to production)
 
+![Dec-08-2024 02-48-34](https://github.com/user-attachments/assets/e9227f3e-1c85-4216-ad79-506334b0e6ae)
 
 # Steps to uploads to the App Store and Play Store
 
