@@ -49,4 +49,7 @@ flutter build ios --release
 ### Android
 ```
 flutter build appbundle
+
+# Find the build here
+# [project]/build/app/outputs/bundle/release/app.aab
 ```
